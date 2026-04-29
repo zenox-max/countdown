@@ -31,25 +31,16 @@ function Unit({ value, label }: { value: number; label: string }) {
 
 export function Countdown() {
   const [t, setT] = useState<ReturnType<typeof getRemaining> | null>(null);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     setT(getRemaining(Date.now()));
+    if (paused) return;
     const id = setInterval(() => setT(getRemaining(Date.now())), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [paused]);
 
-  if (!t) {
-    return (
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-        <Unit value={0} label="Days" />
-        <Unit value={0} label="Hours" />
-        <Unit value={0} label="Minutes" />
-        <Unit value={0} label="Seconds" />
-      </div>
-    );
-  }
-
-  if (t.done) {
+  if (t?.done) {
     return (
       <div className="text-center animate-pulse-soft">
         <p className="font-script text-5xl text-gradient sm:text-7xl">Happy Birthday!</p>
@@ -59,11 +50,30 @@ export function Countdown() {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
-      <Unit value={t.days} label="Days" />
-      <Unit value={t.hours} label="Hours" />
-      <Unit value={t.minutes} label="Minutes" />
-      <Unit value={t.seconds} label="Seconds" />
+    <div className="flex flex-col items-center gap-8">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+        <Unit value={t?.days ?? 0} label="Days" />
+        <Unit value={t?.hours ?? 0} label="Hours" />
+        <Unit value={t?.minutes ?? 0} label="Minutes" />
+        <Unit value={t?.seconds ?? 0} label="Seconds" />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setPaused((p) => !p)}
+        aria-pressed={paused}
+        className="inline-flex items-center gap-2 rounded-full border border-border bg-card/40 px-6 py-2.5 backdrop-blur-md transition-all hover:scale-105 hover:bg-card/60 hover:shadow-card-romantic"
+      >
+        <span className="text-sm uppercase tracking-[0.25em] text-foreground/90">
+          {paused ? "▶  Resume" : "❙❙  Pause"}
+        </span>
+      </button>
+
+      {paused && (
+        <p className="font-script text-lg text-accent animate-fade-in -mt-4">
+          paused — take your time, beautiful ✦
+        </p>
+      )}
     </div>
   );
 }
