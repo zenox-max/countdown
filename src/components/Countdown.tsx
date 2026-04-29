@@ -8,6 +8,7 @@ const TIMEZONES: Array<{ label: string; zone: string }> = [
   { label: "Chicago (CT)", zone: "America/Chicago" },
   { label: "New York (ET)", zone: "America/New_York" },
   { label: "São Paulo", zone: "America/Sao_Paulo" },
+  { label: "Lagos (WAT) 🇳🇬", zone: "Africa/Lagos" },
   { label: "London", zone: "Europe/London" },
   { label: "Paris / Berlin", zone: "Europe/Paris" },
   { label: "Cairo", zone: "Africa/Cairo" },
