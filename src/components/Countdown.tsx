@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-const TARGET = new Date("2026-05-10T00:00:00").getTime();
+const TARGET = new Date(2026, 4, 10, 0, 0, 0).getTime();
 
-function getRemaining() {
-  const diff = Math.max(0, TARGET - Date.now());
+function getRemaining(now: number) {
+  const diff = Math.max(0, TARGET - now);
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff / 3600000) % 24);
   const minutes = Math.floor((diff / 60000) % 60);
@@ -30,12 +30,24 @@ function Unit({ value, label }: { value: number; label: string }) {
 }
 
 export function Countdown() {
-  const [t, setT] = useState(getRemaining());
+  const [t, setT] = useState<ReturnType<typeof getRemaining> | null>(null);
 
   useEffect(() => {
-    const id = setInterval(() => setT(getRemaining()), 1000);
+    setT(getRemaining(Date.now()));
+    const id = setInterval(() => setT(getRemaining(Date.now())), 1000);
     return () => clearInterval(id);
   }, []);
+
+  if (!t) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+        <Unit value={0} label="Days" />
+        <Unit value={0} label="Hours" />
+        <Unit value={0} label="Minutes" />
+        <Unit value={0} label="Seconds" />
+      </div>
+    );
+  }
 
   if (t.done) {
     return (
